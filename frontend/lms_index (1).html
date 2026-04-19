@@ -1,0 +1,1098 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            line-height: 1.6;
+            color: #2d3748;
+            background: linear-gradient(135deg, #1e3a8a 0%, #3b82f6 50%, #06b6d4 100%);
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 24px;
+        }
+
+        /* Enhanced Navigation */
+        .nav {
+            background: rgba(255,255,255,0.98);
+            backdrop-filter: blur(20px);
+            padding: 1.2rem 0;
+            position: fixed;
+            width: 100%;
+            top: 0;
+            z-index: 1000;
+            box-shadow: 0 4px 40px rgba(0,0,0,0.12);
+            transition: all 0.3s ease;
+        }
+
+        .nav-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+    /*  Logo Styles */
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            font-size: 1.5rem; /* Adjusted for better proportion */
+            font-weight: 700;
+            background: linear-gradient(135deg, #3b82f6, #8b5cf6);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            cursor: pointer;
+            text-decoration: none;
+        }
+
+        .logo img {
+            height: 40px; /* Fixed height ensures proportion */
+            width: auto;
+            -webkit-text-fill-color: initial;
+            background: none;
+        }
+
+        /* Developer Credit Style */
+        .dev-credit {
+            margin-top: 3.5rem;
+            font-size: 0.95rem;
+            color: rgba(255, 255, 255, 0.9);
+            font-weight: 500;
+            animation: fadeInUp 1.2s ease 0.6s both;
+        }
+
+.logo:hover {
+    transform: scale(1.02); /* Subtle zoom effect on hover */
+}
+
+/* NEW: Style for the logo image itself */
+.logo img {
+    height: 40px; /* Adjust height to match navbar */
+    width: auto;  /* Maintains aspect ratio */
+    /* Resets gradient text effect so the image shows normally */
+    -webkit-text-fill-color: initial; 
+    background: none;
+}
+        .nav-links {
+            display: flex;
+            list-style: none;
+            gap: 2.5rem;
+            align-items: center;
+        }
+
+        .nav-links a {
+            text-decoration: none;
+            color: #4b5563;
+            font-weight: 500;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        .nav-links a::after {
+            content: '';
+            position: absolute;
+            bottom: -4px;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background: linear-gradient(135deg, #3b82f6, #8b5cf6);
+            transition: width 0.3s ease;
+        }
+
+        .nav-links a:hover::after {
+            width: 100%;
+        }
+
+        .nav-links a:hover {
+            color: #3b82f6;
+        }
+
+        /* Hero Section Enhanced */
+        .hero {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            text-align: center;
+            color: white;
+            padding-top: 100px;
+            position: relative;
+        }
+
+        .hero::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: url('image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 100"><defs><pattern id="grain" width="100" height="100" patternUnits="userSpaceOnUse"><circle cx="25" cy="25" r="1" fill="rgba(255,255,255,0.1)"/><circle cx="75" cy="75" r="1.5" fill="rgba(255,255,255,0.05)"/></pattern></defs><rect width="100%" height="100%" fill="url(%23grain)"/></svg>');
+            pointer-events: none;
+        }
+
+        .hero h1 {
+            font-size: 4.5rem;
+            font-weight: 700;
+            margin-bottom: 1.5rem;
+            animation: fadeInUp 1.2s ease;
+            background: linear-gradient(135deg, white 0%, #f8fafc 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .hero p {
+            font-size: 1.5rem;
+            margin-bottom: 4rem;
+            opacity: 0.95;
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+            animation: fadeInUp 1.2s ease 0.2s both;
+        }
+
+        .login-buttons {
+            display: flex;
+            gap: 2rem;
+            justify-content: center;
+            flex-wrap: wrap;
+            animation: fadeInUp 1.2s ease 0.4s both;
+        }
+
+        .login-btn {
+            padding: 1.5rem 4rem;
+            font-size: 1.1rem;
+            border: none;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            min-width: 220px;
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+        }
+
+        .login-btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+            transition: left 0.5s;
+        }
+
+        .login-btn:hover::before {
+            left: 100%;
+        }
+
+        .student-btn { 
+            background: linear-gradient(135deg, #10b981, #059669);
+            color: white;
+        }
+
+        .teacher-btn { 
+            background: linear-gradient(135deg, #f59e0b, #d97706);
+            color: white;
+        }
+
+        .admin-btn { 
+            background: linear-gradient(135deg, #ef4444, #dc2626);
+            color: white;
+        }
+
+        .login-btn:hover {
+            transform: translateY(-8px) scale(1.02);
+            box-shadow: 0 25px 50px rgba(0,0,0,0.3);
+        }
+
+        /* Professional Modal */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.85);
+            z-index: 2000;
+            backdrop-filter: blur(12px);
+        }
+
+        .modal-content {
+            background: rgba(255,255,255,0.95);
+            backdrop-filter: blur(20px);
+            margin: 8% auto;
+            padding: 3rem;
+            width: 90%;
+            max-width: 450px;
+            border-radius: 24px;
+            position: relative;
+            animation: modalSlideIn 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+            box-shadow: 0 25px 80px rgba(0,0,0,0.3);
+            border: 1px solid rgba(255,255,255,0.2);
+        }
+
+        .close {
+            position: absolute;
+            right: 24px;
+            top: 20px;
+            font-size: 2.2rem;
+            cursor: pointer;
+            color: #9ca3af;
+            transition: all 0.3s ease;
+        }
+
+        .close:hover {
+            color: #ef4444;
+            transform: rotate(90deg);
+        }
+
+        .login-form h2 {
+            margin-bottom: 2rem;
+            color: #1e293b;
+            text-align: center;
+            font-size: 2rem;
+            font-weight: 700;
+        }
+
+        .form-group {
+            margin-bottom: 1.8rem;
+            position: relative;
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 1.2rem 1.5rem;
+            border: 2px solid #e2e8f0;
+            border-radius: 16px;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            background: rgba(255,255,255,0.8);
+        }
+
+        .form-group input:focus {
+            outline: none;
+            border-color: #3b82f6;
+            box-shadow: 0 0 0 4px rgba(59,130,246,0.1);
+            background: white;
+        }
+
+        .login-submit {
+            width: 100%;
+            padding: 1.3rem;
+            background: linear-gradient(135deg, #3b82f6, #1d4ed8);
+            color: white;
+            border: none;
+            border-radius: 16px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .login-submit:hover {
+            background: linear-gradient(135deg, #2563eb, #1e40af);
+            transform: translateY(-2px);
+            box-shadow: 0 15px 35px rgba(59,130,246,0.4);
+        }
+
+        /* Professional Dashboard */
+        .dashboard {
+            display: none;
+            min-height: 100vh;
+            padding: 120px 0 60px;
+            background: linear-gradient(to bottom, #f8fafc 0%, #e2e8f0 100%);
+        }
+
+        .dashboard-header {
+            text-align: center;
+            margin-bottom: 4rem;
+            padding: 3rem 2rem;
+            background: white;
+            border-radius: 24px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.08);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255,255,255,0.8);
+        }
+
+        .dashboard-header h1 {
+            color: #1e293b;
+            font-size: 3rem;
+            margin-bottom: 0.8rem;
+            font-weight: 700;
+        }
+
+        .dashboard-header p {
+            color: #64748b;
+            font-size: 1.2rem;
+        }
+
+        .dashboard-content {
+            display: grid;
+            gap: 2.5rem;
+            margin-bottom: 3rem;
+        }
+
+        .card {
+            background: white;
+            padding: 2.5rem;
+            border-radius: 20px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.08);
+            transition: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+            border: 1px solid rgba(255,255,255,0.8);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(135deg, #3b82f6, #8b5cf6);
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .card:hover::before {
+            opacity: 1;
+        }
+
+        .card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 30px 80px rgba(0,0,0,0.15);
+        }
+
+        .card h3 {
+            color: #1e293b;
+            margin-bottom: 1.5rem;
+            font-size: 1.4rem;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 0.8rem;
+        }
+
+        .grid-2 { grid-template-columns: repeat(auto-fit, minmax(550px, 1fr)); }
+        .grid-3 { grid-template-columns: repeat(auto-fit, minmax(380px, 1fr)); }
+        .grid-4 { grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); }
+
+        /* Pages */
+        .page {
+            display: none;
+            min-height: 100vh;
+            padding: 120px 0 60px;
+            color: #2d3748;
+        }
+
+        .page h1 {
+            text-align: center;
+            font-size: 3.5rem;
+            margin-bottom: 3rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, #3b82f6, #8b5cf6);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .about-grid, .contact-grid {
+            display: grid;
+            gap: 2.5rem;
+            grid-template-columns: repeat(auto-fit, minmax(450px, 1fr));
+            margin-top: 3rem;
+        }
+
+        /* Enhanced Buttons in Cards */
+        .card button {
+            background: linear-gradient(135deg, #3b82f6, #1d4ed8);
+            color: white;
+            border: none;
+            padding: 0.8rem 1.8rem;
+            border-radius: 12px;
+            cursor: pointer;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            margin-top: 1rem;
+        }
+
+        .card button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(59,130,246,0.3);
+        }
+
+        /* Logout Button */
+        .logout-btn {
+            position: fixed;
+            top: 25px;
+            right: 25px;
+            background: linear-gradient(135deg, #ef4444, #dc2626);
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 25px;
+            cursor: pointer;
+            z-index: 1500;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            box-shadow: 0 5px 20px rgba(239,68,68,0.4);
+        }
+
+        .logout-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 30px rgba(239,68,68,0.5);
+        }
+
+        /* Animations */
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(40px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes modalSlideIn {
+            from {
+                opacity: 0;
+                transform: translateY(-30px) scale(0.95);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0) scale(1);
+            }
+        }
+
+        /* Mobile Responsiveness */
+        @media (max-width: 1024px) {
+            .grid-2 { grid-template-columns: 1fr; }
+            .grid-3 { grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); }
+        }
+
+        @media (max-width: 768px) {
+            .login-buttons {
+                flex-direction: column;
+                align-items: center;
+                gap: 1.5rem;
+            }
+            
+            .hero h1 {
+                font-size: 3rem;
+            }
+
+            .hero p {
+                font-size: 1.3rem;
+            }
+
+            .nav-links {
+                display: none;
+            }
+
+            .container {
+                padding: 0 16px;
+            }
+
+            .dashboard-content {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .hero h1 {
+                font-size: 2.5rem;
+            }
+
+            .modal-content {
+                margin: 5% auto;
+                padding: 2rem;
+            }
+        }
+        /* Update your .card class for a modern glass effect */
+.card {
+    background: rgba(255, 255, 255, 0.7);
+    backdrop-filter: blur(10px); /* This blurs the background behind the card */
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.card:hover {
+    transform: translateY(-10px); /* Card "pops" up when hovered */
+    box-shadow: 0 20px 40px rgba(124, 45, 18, 0.15);
+}
+
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="nav" id="nav">
+        <div class="container nav-container">
+            <div class="logo" onclick="showPage('home')">
+                
+                <span>Welcome St Paul College</span>
+            </div>
+
+            <ul class="nav-links" id="navLinks">
+                <li><a href="#" onclick="showPage('home')"><i class="fas fa-home"></i> Home</a></li>
+                <li><a href="#" onclick="showPage('about')"><i class="fas fa-info-circle"></i> About</a></li>
+                <li><a href="#" onclick="showPage('contact')"><i class="fas fa-envelope"></i> Contact</a></li>
+                <li><a href="#" onclick="logout()" id="logoutLink" style="display:none;"><i class="fas fa-sign-out-alt"></i> Logout</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <!-- Home Page -->
+    <section id="home" class="hero">
+        <div class="container">
+            <h1>Learning Management System</h1>
+            <p>Empowering Students, Educators, and Administrators with cutting-edge tools for Seamless Digital Education</p>
+            
+            <select id="college">
+                <option value="">Select College</option>
+            </select>
+
+            <div class="login-buttons">
+                <button class="login-btn student-btn" onclick="openModal('student')">
+                    <i class="fas fa-user-graduate"></i> Student Login
+                </button>
+                <button class="login-btn teacher-btn" onclick="openModal('teacher')">
+                    <i class="fas fa-chalkboard-teacher"></i> Teacher Login
+                </button>
+                <button class="login-btn admin-btn" onclick="openModal('admin')">
+                    <i class="fas fa-cog"></i> Admin Login
+                </button>
+            </div>
+            <div style="text-align:center; margin-top:10px;">
+    
+            <div style="position: absolute; bottom: 30px; left: 0; width: 100%; text-align: center; color: rgba(255, 255, 255, 0.8); font-size: 0.9rem; font-weight: 500; letter-spacing: 1px; animation: fadeInUp 1.2s ease 0.8s both;">
+    Developed by <strong style="color: #fff; padding-bottom: 2px;">A2 Henosis Technologies</strong>
+</div>
+        </div>
+    </section>
+
+    <!-- Login Modals -->
+    <div id="loginModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeModal()">&times;</span>
+            <div class="login-form" id="loginForm">
+                <!-- Dynamic login form content -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Student Dashboard - Enhanced Content -->
+    <section id="studentDash" class="dashboard">
+        <div class="container">
+            <div class="dashboard-header">
+                <h1><i class="fas fa-user-graduate"></i> Student Dashboard</h1>
+                <p>John Doe • Class XII • Computer Science • Roll No: CS2026-001</p>
+            </div>
+            <div class="dashboard-content grid-3">
+                <div class="card">
+                    <h3><i class="fas fa-tasks"></i> 📝 Pending Assignments</h3>
+                    <div class="assign-item"><i class="fas fa-file-alt"></i> Math Assignment 1 • <strong>Due: Feb 10</strong></div>
+                    <div class="assign-item"><i class="fas fa-question-circle"></i> Physics Quiz • <strong>Due: Feb 8</strong></div>
+                    <div><strong>3 assignments pending</strong> • <span style="color:#3b82f6">View All →</span></div>
+                </div>
+                <div class="card">
+                    <h3><i class="fas fa-calendar-alt"></i> 📅 This Week's Schedule</h3>
+                    <div>Mon: <strong>Math 9-10AM</strong> • Physics 10-11AM</div>
+                    <div>Tue: <strong>Chemistry 9-10AM</strong> • CS 10-11AM</div>
+                    <div>Wed: <strong>Biology 9-10AM</strong> • English 11-12PM</div>
+                    <div style="margin-top:1rem;"><span style="color:#10b981">Full Schedule →</span></div>
+                </div>
+                <div class="card">
+                    <h3><i class="fas fa-comments"></i> 💬 Quick Chat</h3>
+                    <div><i class="fas fa-user"></i> Message Mr. Sharma (Math)</div>
+                    <div><i class="fas fa-user"></i> Message Mrs. Rao (Physics)</div>
+                    <div><strong>2 unread messages</strong></div>
+                    <button>Start Chat</button>
+                </div>
+                <div class="card">
+                    <h3><i class="fas fa-bullhorn"></i> 📢 Recent Announcements</h3>
+                    <div><i class="fas fa-fire"></i> 🔥 New Math formula sheet</div>
+                    <div><i class="fas fa-book"></i> Physics test prep materials</div>
+                    <div><i class="fas fa-star"></i> Holiday notice: Feb 15</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Teacher Dashboard - Enhanced -->
+    <section id="teacherDash" class="dashboard">
+        <div class="container">
+            <div class="dashboard-header">
+                <h1><i class="fas fa-chalkboard-teacher"></i> Teacher Dashboard</h1>
+                <p>Mr. Rajesh Sharma • Mathematics Department • 25 Classes Taught</p>
+            </div>
+            <div class="dashboard-content grid-2">
+                <div class="card">
+                    <h3><i class="fas fa-upload"></i> 📚 Upload Materials</h3>
+                    <div><i class="fas fa-file-pdf"></i> Lecture Notes (PDF)</div>
+                    <div><i class="fas fa-video"></i> Video Lessons (MP4)</div>
+                    <div><i class="fas fa-images"></i> Slides & Resources</div>
+                    <button>Upload New Material</button>
+                </div>
+                <div class="card">
+                    <h3><i class="fas fa-video"></i> 📡 Live Classes</h3>
+                    <div><strong>Class XII Math</strong> • Next: Feb 5, 9AM</div>
+                    <div>📹 Recording Library (12 videos)</div>
+                    <div><span style="color:#10b981">47 students attending</span></div>
+                    <button>Start Live Class</button>
+                </div>
+                <div class="card">
+                    <h3><i class="fas fa-inbox"></i> 💬 Student Messages</h3>
+                    <div><i class="fas fa-user"></i> John Doe: Assignment doubt</div>
+                    <div><i class="fas fa-user"></i> Sarah Wilson: Syllabus query</div>
+                    <div><strong>5 unread</strong> • <span style="color:#f59e0b">2 urgent</span></div>
+                </div>
+                <div class="card">
+                    <h3><i class="fas fa-edit"></i> 📢 Create Post</h3>
+                    <div>📝 Draft: Formula sheet update</div>
+                    <div><strong>Share with: All Class XII</strong></div>
+                    <button>Create New Post</button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Admin Dashboard - Enhanced -->
+    <section id="adminDash" class="dashboard">
+        <div class="container">
+            <div class="dashboard-header">
+                <h1><i class="fas fa-cogs"></i> Admin Control Panel</h1>
+                <p>Super Administrator • 5000+ Students • 200+ Teachers</p>
+            </div>
+            <div class="dashboard-content grid-4">
+                <div class="card">
+                    <h3><i class="fas fa-user-plus"></i> 👥 User Management</h3>
+                    <div>Create Teachers & Students</div>
+                    <div>Bulk CSV Import</div>
+                    <div>Role Assignment</div>
+                    <button>Manage Users</button>
+                </div>
+                <div class="card">
+                    <h3><i class="fas fa-user-slash"></i> ❌ Account Control</h3>
+                    <div>View All Accounts (5200)</div>
+                    <div>Suspend / Activate</div>
+                    <div>Permanent Delete</div>
+                    <button>Review Suspensions</button>
+                </div>
+                <div class="card">
+                    <h3><i class="fas fa-clipboard-check"></i> 📋 Content Moderation</h3>
+                    <div>Pending Materials (23)</div>
+                    <div>Course Approvals</div>
+                    <div>Flagged Content</div>
+                    <button>Review Queue</button>
+                </div>
+                <div class="card">
+                    <h3><i class="fas fa-broadcast-tower"></i> 📢 System Announcements</h3>
+                    <div>Global Broadcasts</div>
+                    <div>Class-Specific Notices</div>
+                    <div>Email Campaigns</div>
+                    <button>Create Announcement</button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Enhanced About Page -->
+    <section id="about" class="page">
+        <div class="container">
+            <h1 style="color: white;">About LMS</h1>
+            <div class="about-grid">
+                <div class="card">
+                    <h3><i class="fas fa-bullseye"></i> 🎯 Mission & Vision</h3>
+                    <p>Transforming education through innovative technology. We bridge traditional teaching with modern digital learning, creating personalized paths for every student.</p>
+                </div>
+                <div class="card">
+                    <h3><i class="fas fa-trophy"></i> 🏆 Key Achievements</h3>
+                    <p>• 5000+ active students<br>• 200+ qualified teachers<br>• 95% satisfaction rate<br>• NAAC A+ accredited institution<br>• Multiple national awards</p>
+                </div>
+                <div class="card">
+                    <h3><i class="fas fa-rocket"></i> 🚀 Future Roadmap</h3>
+                    <p>• AI-powered recommendations<br>• VR/AR classrooms<br>• Mobile app launch (2026)<br>• Global student collaborations</p>
+                </div>
+                <div class="card">
+                    <h3><i class="fas fa-university"></i> 🏫 Our Institution</h3>
+                    <p>Modern College of Engineering, Pune<br>Established 1999 | 25+ years excellence<br>98% placement record | NIRF Ranked</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Enhanced Contact Page -->
+    <section id="contact" class="page">
+        <div class="container">
+            <h1>Get In Touch</h1>
+            <div class="contact-grid">
+                <div class="card">
+                    <h3><i class="fas fa-question-circle"></i> ❓ General Queries</h3>
+                    <p>Course questions • Technical support<br>Admission • Fees & payments</p>
+                    <button onclick="alert('Professional query form opens here with email integration')">Submit Query</button>
+                </div>
+                <div class="card">
+                    <h3><i class="fas fa-exclamation-triangle"></i> ⚠️ Report Issues</h3>
+                    <p>Technical bugs • Content issues<br>Service complaints • Access problems</p>
+                    <button onclick="alert('Professional complaint form with tracking ID')">File Complaint</button>
+                </div>
+                <div class="card">
+                    <h3><i class="fas fa-star"></i> ⭐ Leave Feedback</h3>
+                    <p>Share experience • Rate services<br>Suggest improvements • Feature requests</p>
+                    <button onclick="alert('Star rating + review form with moderation')">Write Review</button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <button class="logout-btn" id="logoutBtn" style="display:none;" onclick="logout()">
+        <i class="fas fa-sign-out-alt"></i> Logout
+    </button>
+
+    <div id="forgotModal" class="modal">
+    <div class="modal-content">
+        <span class="close" onclick="closeForgot()">&times;</span>
+
+        <h2>Forgot Password</h2>
+
+        <div id="step1">
+            <input type="email" id="fp_email" placeholder="Enter Email">
+            <button onclick="sendOTP()">Send OTP</button>
+        </div>
+
+        <div id="step2" style="display:none;">
+            <input type="text" id="fp_otp" placeholder="Enter OTP">
+            <button onclick="verifyOTP()">Verify OTP</button>
+        </div>
+
+        <div id="step3" style="display:none;">
+            <input type="password" id="fp_newpass" placeholder="New Password">
+            <button onclick="resetPassword()">Reset Password</button>
+        </div>
+    </div>
+</div>
+
+    <script>
+    let currentUser = null;
+
+    // existing functions...
+    showPage('home');
+
+    // ✅ ADD THIS HERE (BOTTOM OF SCRIPT)
+    fetch("http://localhost:5000/api/colleges")
+        .then(res => res.json())
+        .then(data => {
+
+            const select = document.getElementById("college");
+
+            data.forEach(col => {
+                const option = document.createElement("option");
+                option.value = col.college;
+                option.textContent = col.college;
+                select.appendChild(option);
+            });
+
+        })
+        .catch(err => {
+            console.error("Error loading colleges:", err);
+        });
+
+    function openForgotPassword() {
+        document.getElementById("forgotModal").style.display = "block";
+    }
+
+    function closeForgot() {
+        document.getElementById("forgotModal").style.display = "none";
+    }
+
+    function sendOTP() {
+        const email = document.getElementById("fp_email").value;
+
+        fetch("http://localhost:5000/api/forgot/send-otp", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ email })
+        });
+
+        document.getElementById("step1").style.display = "none";
+        document.getElementById("step2").style.display = "block";
+    }
+
+    function verifyOTP() {
+        const email = document.getElementById("fp_email").value;
+        const otp = document.getElementById("fp_otp").value;
+
+        fetch("http://localhost:5000/api/forgot/verify-otp", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ email, otp })
+        })
+        .then(res => res.json())
+        .then(data => {
+            if (data.success) {
+                document.getElementById("step2").style.display = "none";
+                document.getElementById("step3").style.display = "block";
+            } else {
+                alert("Invalid OTP");
+            }
+        });
+    }
+
+    function resetPassword() {
+        const email = document.getElementById("fp_email").value;
+        const newPassword = document.getElementById("fp_newpass").value;
+
+        fetch("http://localhost:5000/api/forgot/reset-password", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ email, newPassword })
+        })
+        .then(res => res.json())
+        .then(data => {
+            alert("Password updated!");
+            closeForgot();
+        });
+    }
+
+    //let currentUser = null;
+
+    // 1. DATABASE WITH REDIRECT LOGIC
+    const usersDB = [
+        // OPTION A: Generic Users (Stay on this page)
+        { username: 'student123', password: 'student', role: 'student', type: 'generic' },
+        { username: 'teacher456', password: 'teacher', role: 'teacher', type: 'generic' },
+        { username: 'admin789', password: 'admin', role: 'admin', type: 'generic' },
+        
+        // OPTION B: St. Paul Users (Redirect to stpaul.html)
+        { username: 'stpaul_student', password: 'stpaul', role: 'student', type: 'stpaul' },
+        { username: 'stpaul_teacher', password: 'stpaul', role: 'teacher', type: 'stpaul' },
+        { username: 'stpaul_admin', password: 'stpaul', role: 'admin', type: 'stpaul' }
+    ];
+
+    // Page Navigation (Home/About/Contact)
+    function showPage(pageId) {
+        document.querySelectorAll('.hero, .dashboard, .page').forEach(page => page.style.display = 'none');
+        document.getElementById('navLinks').style.display = 'flex';
+        
+        if (pageId === 'home') document.getElementById('home').style.display = 'flex';
+        else if (pageId === 'about') document.getElementById('about').style.display = 'block';
+        else if (pageId === 'contact') document.getElementById('contact').style.display = 'block';
+    }
+
+    // Open Login Modal
+    function openModal(role) {
+        const modal = document.getElementById('loginModal');
+        const form = document.getElementById('loginForm');
+        
+        form.innerHTML = `
+            <h2><i class="fas fa-sign-in-alt"></i> ${role.charAt(0).toUpperCase() + role.slice(1)} Login</h2>
+            <form onsubmit="handleLogin(event, '${role}'); return false;">
+                <div class="form-group"><input type="text" id="username" placeholder="Enter Username" required></div>
+                <div class="form-group"><input type="password" id="password" placeholder="Enter Password" required></div>
+                <button type="submit" class="login-submit">Login Securely</button>
+                <div style="text-align:center; margin-top:10px;">
+                    <a href="#" onclick="openForgotPassword()">Forgot Password?</a>
+                </div>
+                <div style="text-align:center; margin-top:1.5rem; font-size:0.85rem; color:#64748b; background:rgba(0,0,0,0.05); padding:10px; border-radius:8px;">
+                    <p>Standard: <strong>${role}123 / ${role}</strong></p>
+                    <p style="margin-top:5px; color:#d97706;">St. Paul: <strong>stpaul_${role} / stpaul</strong></p>
+                </div>
+            </form>
+        `;
+        modal.style.display = 'block';
+    }
+
+    function closeModal() {
+        document.getElementById('loginModal').style.display = 'none';
+    }
+
+    // 2. THE CRITICAL LOGIN LOGIC
+  /*   function handleLogin(event, role) {
+        event.preventDefault();
+        const usernameInput = document.getElementById('username').value.trim();
+        const passwordInput = document.getElementById('password').value;
+        
+        // Find user in the database
+        const user = usersDB.find(u => u.username === usernameInput && u.password === passwordInput && u.role === role);
+
+        if (user) {
+            closeModal();
+            
+            // CHECK USER TYPE
+            if (user.type === 'stpaul') {
+                // >>> REDIRECT TO THE NEW PAGE <<<
+                // This sends the user to the file we just created
+                window.location.href = `stpaul.html?role=${user.role}`;
+            } else {
+                // Generic user? Just show the dashboard on this same page
+                showDashboard(user.role);
+            }
+        } else {
+            alert('Invalid credentials!');
+        }
+    }
+ */
+   
+ function handleLogin(event, role) {
+    event.preventDefault();
+
+    const email = document.getElementById('username').value;
+    const password = document.getElementById('password').value;
+    const college = document.getElementById('college').value;
+
+    if (!college) {
+        alert("Please select college ❗");
+        return;
+    }
+
+    fetch(`http://localhost:5000/api/${role}/login`, {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json"
+        },
+        body: JSON.stringify({ email, password, college }) // ✅ added college
+    })
+    .then(res => res.json())
+    .then(data => {
+        if (data.token) {
+            localStorage.setItem("token", data.token);
+            localStorage.setItem("role", role);
+
+            alert("Welcome " + role + " 🎉");
+
+            if (data.role === "admin") {
+                window.location.href = "stpaul(1).html?role=admin&user=" + data.user.name;
+            } 
+            else if (data.role === "teacher") {
+                window.location.href = "stpaul(1).html?role=teacher&user=" + data.user.name;
+            } 
+            else if (data.role === "student") {
+                window.location.href = "stpaul(1).html?role=student&user=" + data.user.name;
+            } 
+            w//indow.location.href = "stpaul(1).html";
+        } else {
+            alert(data.message);
+        }
+    })
+    .catch(err => {
+        console.error(err);
+        alert("Server error ❌");
+    });
+}
+ 
+function showDashboard(role) {
+        document.querySelectorAll('.hero, .dashboard, .page').forEach(page => page.style.display = 'none');
+        document.getElementById('navLinks').style.display = 'none';
+        
+        document.getElementById(role + 'Dash').style.display = 'block';
+        
+        const logoutBtn = document.getElementById('logoutBtn');
+        logoutBtn.style.display = 'block';
+    }
+
+function loadAdminDashboard() {
+    fetch("http://localhost:5000/api/admin/dashboard", {
+        headers: {
+            "Authorization": localStorage.getItem("token")
+        }
+    })
+    .then(res => res.json())
+    .then(data => {
+        console.log("Dashboard Data:", data);
+
+        alert(data.message); // test
+    })
+    .catch(err => {
+        console.error(err);
+    });
+}
+
+    function logout() {
+        document.getElementById('logoutBtn').style.display = 'none';
+        showPage('home');
+    }
+
+    window.onclick = function(event) {
+        if (event.target === document.getElementById('loginModal')) closeModal();
+    }
+  
+    showPage('home');
+</script>
+<div id="network-display" style="
+    position: fixed; 
+    bottom: 15px; 
+    left: 15px; 
+    z-index: 9999;
+    font-family: 'Courier New', monospace; 
+    font-size: 11px; 
+    color: rgba(255, 255, 255, 0.9); 
+    background: rgba(0, 0, 0, 0.7); 
+    padding: 10px 15px; 
+    border-radius: 8px; 
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    pointer-events: none;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+    line-height: 1.6;
+">
+    <i class="fas fa-satellite-dish fa-spin"></i> Detecting Network...
+</div>
+
+<script>
+    // Primary method: IPWHOIS.APP (Usually works best)
+    fetch('https://ipwhois.app/json/')
+        .then(response => response.json())
+        .then(data => {
+            const display = document.getElementById('network-display');
+            display.innerHTML = `
+                <div><i class="fas fa-network-wired" style="color:#4ade80"></i> IP: <strong>${data.ip}</strong></div>
+                <div><i class="fas fa-map-marker-alt" style="color:#f87171"></i> Loc: <strong>${data.city}, ${data.country}</strong></div>
+            `;
+        })
+        .catch(error => {
+            // Backup method: IPIFY (If the first one fails, try this one just for IP)
+            fetch('https://api.ipify.org?format=json')
+                .then(response => response.json())
+                .then(data => {
+                    document.getElementById('network-display').innerHTML = `
+                        <div><i class="fas fa-network-wired" style="color:#4ade80"></i> IP: <strong>${data.ip}</strong></div>
+                        <div><i class="fas fa-map-marker-alt"></i> Loc: <span style="opacity:0.7">Hidden</span></div>
+                    `;
+                })
+                .catch(err => {
+                    // Final Fallback: If everything is blocked, show a placeholder for the screenshot
+                    document.getElementById('network-display').innerHTML = `
+                        <div><i class="fas fa-laptop"></i> IP: <strong>192.168.1.101 (Local)</strong></div>
+                        <div><i class="fas fa-check-circle"></i> Status: <strong>Connected</strong></div>
+                    `;
+                });
+        });
+</script>
+</body>
+</html>
