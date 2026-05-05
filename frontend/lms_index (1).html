@@ -799,13 +799,14 @@
     </div>
 </div>
 
-    <script>
+<script>
     let currentUser = null;
 
     // existing functions...
     showPage('home');
 
     // ✅ ADD THIS HERE (BOTTOM OF SCRIPT)
+    // fetch("https://lms.a2henosistechnologies.com/api/colleges")
     fetch("http://localhost:5000/api/colleges")
         .then(res => res.json())
         .then(data => {
@@ -822,7 +823,35 @@
         })
         .catch(err => {
             console.error("Error loading colleges:", err);
+        }); 
+
+   /*  fetch("https://lms.a2henosistechnologies.com/api/colleges")
+    .then(res => res.json())
+    .then(data => {
+
+        console.log("API:", data); // DEBUG
+
+        const select = document.getElementById("college");
+
+        const colleges = Array.isArray(data)
+            ? data
+            : data.colleges || data.data || [];
+
+        if (!Array.isArray(colleges)) {
+            throw new Error("Invalid colleges format");
+        }
+
+        colleges.forEach(col => {
+            const option = document.createElement("option");
+            option.value = col.college;
+            option.textContent = col.college;
+            select.appendChild(option);
         });
+
+    })
+    .catch(err => {
+        console.error("Error loading colleges:", err);
+    }); */
 
     function openForgotPassword() {
         document.getElementById("forgotModal").style.display = "block";

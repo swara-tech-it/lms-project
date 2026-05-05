@@ -67,34 +67,6 @@ router.post('/admin/register', async (req, res) => {
 });
 
 // ================= ADMIN LOGIN =================
-/* router.post('/admin/login', (req, res) => {
-    const { email, password } = req.body;
-
-    const sql = "SELECT * FROM admins WHERE email = ?";
-
-    db.query(sql, [email], async (err, result) => {
-        if (err) return res.status(500).json({ message: "Server error ❌" });
-
-        if (result.length === 0) {
-            return res.json({ message: "User not found ❌" });
-        }
-
-        const user = result[0];
-
-        const match = await bcrypt.compare(password, user.password);
-
-        if (!match) {
-            return res.json({ message: "Wrong password ❌" });
-        }
-
-        res.json({
-            message: "Login successful",
-            user: user
-        });
-    });
-}); */
-
-// ================= ADMIN LOGIN =================
 
 router.post('/admin/login', (req, res) => {
     const { email, password, college } = req.body;

@@ -4,6 +4,8 @@
 const urlParams = new URLSearchParams(window.location.search);
 let role = urlParams.get('role') || 'student';
 let username = urlParams.get('user') || 'User';
+const BASE_URL = "http://localhost:5000"; // for development
+// const BASE_URL = "https://lms.a2henosistechnologies.com"; // for production
 
 const roleTitles = {
     'student': 'Student',
@@ -48,15 +50,6 @@ function loadDashboard() {
     if (activeSection) activeSection.style.display = 'grid';
 }
 
-/* function openSubpage(pageId) {
-    document.querySelectorAll('.role-section').forEach(el => el.style.display = 'none');
-    document.getElementById('subpages-container').style.display = 'block';
-    document.querySelectorAll('.subpage').forEach(el => el.style.display = 'none');
-    const target = document.getElementById(pageId);
-    if(target) target.style.display = 'block';
-} */
-
-
 function openSubpage(pageId) {
     document.querySelectorAll('.role-section').forEach(el => el.style.display = 'none');
     document.getElementById('subpages-container').style.display = 'block';
@@ -84,7 +77,8 @@ function openSubpage(pageId) {
     }
 
     if (pageId === 'teacher-live') {
-        loadLiveBatches();   // ⭐ IMPORTANT FIX
+        //loadLiveBatches();   // ⭐ IMPORTANT FIX
+        loadLiveClassBatches();      
     }
     
 // AUTO TRIGGERS
@@ -219,41 +213,6 @@ function closeBatchDrawer() {
     });
 }
 
-/* function saveBatch() {
-    const name = document.getElementById('newBatchName').value;
-    const code = document.getElementById('newBatchCode').value;
-    const start = document.getElementById('newBatchStart').value;
-    const end = document.getElementById('newBatchEnd').value;
-    const capacity = document.getElementById('newBatchCapacity').value;
-
-    if (!name || !code || !start || !end || !capacity) {
-        alert("Please fill in all 5 fields to create a batch.");
-        return;
-    }
-
-    const startStr = new Date(start).toLocaleDateString('en-GB', { day: '2-digit', month: 'long', year: 'numeric' });
-    const endStr = new Date(end).toLocaleDateString('en-GB', { day: '2-digit', month: 'long', year: 'numeric' });
-
-    const newBatch = {
-        id: Date.now(),
-        name: name,
-        code: code,
-        start: startStr,
-        end: endStr,
-        capacity: parseInt(capacity),
-        enrolled: 0
-    };
-
-    const db = JSON.parse(localStorage.getItem('batchDB'));
-    db.push(newBatch);
-    localStorage.setItem('batchDB', JSON.stringify(db));
-
-    alert('Success! ' + name + ' has been created.');
-    closeBatchDrawer();
-    renderBatchesTable();
-} */
-
-
 async function saveBatch() {
 
     const name = document.getElementById('newBatchName').value;
@@ -270,7 +229,7 @@ async function saveBatch() {
 
     const token = localStorage.getItem("token");
 
-    const res = await fetch("http://localhost:5000/api/batches", {
+    const res = await fetch(`${BASE_URL}/api/batches`, {
         method: "POST",
         headers: {
             "Content-Type": "application/json",
@@ -297,44 +256,11 @@ async function saveBatch() {
     }
 }
 
-
-/* async function fetchBatches() {
-    try {
-        const res = await fetch("http://localhost:5000/api/batches");
-
-        if (!res.ok) {
-            throw new Error("Failed to fetch batches");
-        }
-
-        const data = await res.json();
-
-        const tbody = document.getElementById('batchesTableBody');
-
-        let html = '';
-
-        data.forEach((batch, index) => {
-            html += `
-            <tr>
-                <td>${index + 1}</td>
-                <td>${batch.name}</td>
-                <td>${batch.capacity}</td>
-            </tr>`;
-        });
-
-        tbody.innerHTML = html;
-
-    } catch (err) {
-        console.log(err);
-        alert("Error loading batches");
-    }
-} */
-
-
 async function fetchBatches() {
     try {
         const token = localStorage.getItem("token");
 
-        const res = await fetch("http://localhost:5000/api/batches", {
+        const res = await fetch(`${BASE_URL}/api/batches`, {
             headers: {
                 "Authorization": `Bearer ${localStorage.getItem("token")}`
             }
@@ -357,12 +283,10 @@ async function fetchBatches() {
             <tr>
                 <td>${index + 1}</td>
                 <td>${batch.name}</td>
-                <td>${batch.start_date || '-'}</td>
-                <td>${batch.end_date || '-'}</td>
-                <td>
-                    ${batch.enrolled || 0} / ${batch.capacity}
-                    
-                </td>
+                <td>${batch.start_date ?? 'N/A'}</td>
+                <td>${batch.end_date ?? 'N/A'}</td>
+                <td>${batch.enrolled ?? 0} / ${batch.capacity ?? 0}</td>
+        
             </tr>`;
         });
 
@@ -448,39 +372,12 @@ function renderBatchesTable() {
 }
 
 // --- Enrollment Approvals ---
-/* function renderEnrollmentRequests() {
-    const tbody = document.getElementById('enrollmentRequestsBody');
-    if (!tbody) return;
-
-    const enrollments = JSON.parse(localStorage.getItem('enrollmentDB')) || [];
-    const batches = JSON.parse(localStorage.getItem('batchDB')) || [];
-    let html = '';
-
-    enrollments.forEach(req => {
-        if (req.status === 'Pending') {
-            const batch = batches.find(b => b.id === req.batchId);
-            const batchName = batch ? batch.name : 'Unknown Batch';
-
-            html += `
-            <tr style="border-bottom: 1px solid #f1f5f9;">
-                <td style="padding: 15px; font-weight: bold;">${req.studentName}</td>
-                <td style="padding: 15px;">${batchName}</td>
-                <td style="padding: 15px; text-align: right;">
-                    <button onclick="approveEnrollment(${req.id})" style="background: #16a34a; color: white; border: none; padding: 8px 15px; border-radius: 5px; cursor: pointer; font-weight: bold;"><i class="fas fa-check"></i> Approve</button>
-                </td>
-            </tr>`;
-        }
-    });
-
-    if (html === '') html = '<tr><td colspan="3" style="text-align:center; padding:20px; color:#64748b;">No pending enrollment requests.</td></tr>';
-    tbody.innerHTML = html;
-} */
 
 async function renderEnrollmentRequests() {
     const tbody = document.getElementById('enrollmentRequestsBody');
     if (!tbody) return;
 
-    const res = await fetch("http://localhost:5000/api/enrollments/teacher", {
+    const res = await fetch(`${BASE_URL}/api/enrollments/teacher`, {
         headers: {
             "Authorization": `Bearer ${localStorage.getItem("token")}`
         }
@@ -515,35 +412,8 @@ async function renderEnrollmentRequests() {
     tbody.innerHTML = html;
 }
 
-/* function approveEnrollment(requestId) {
-    const enrollments = JSON.parse(localStorage.getItem('enrollmentDB'));
-    const batches = JSON.parse(localStorage.getItem('batchDB'));
-    
-    const reqIndex = enrollments.findIndex(r => r.id === requestId);
-    if (reqIndex !== -1) {
-        const batchId = enrollments[reqIndex].batchId;
-        const batchIndex = batches.findIndex(b => b.id === batchId);
-        
-        if (batchIndex !== -1 && batches[batchIndex].enrolled < batches[batchIndex].capacity) {
-            enrollments[reqIndex].status = 'Approved'; 
-            batches[batchIndex].enrolled += 1; 
-            
-            localStorage.setItem('enrollmentDB', JSON.stringify(enrollments));
-            localStorage.setItem('batchDB', JSON.stringify(batches));
-            
-            alert("Student approved and enrolled successfully!");
-            
-            renderEnrollmentRequests();
-            checkTeacherNotifications();
-            renderBatchesTable(); 
-        } else {
-            alert("Cannot approve: The batch is currently full or no longer exists.");
-        }
-    }
-} */
-
 async function approveEnrollment(id) {
-    const res = await fetch(`http://localhost:5000/api/enrollments/approve/${id}`, {
+    const res = await fetch(`${BASE_URL}/api/enrollments/approve/${id}`, {
         method: "PUT",
         headers: {
             "Authorization": `Bearer ${localStorage.getItem("token")}`
@@ -614,30 +484,12 @@ function saveGrade(taskId) {
 }
 
 // --- Teacher Upload Material Logic ---
-/* function openMaterialDrawer() {
-    const batchSelect = document.getElementById('uploadMaterialBatch');
-    const batches = JSON.parse(localStorage.getItem('batchDB')) || [];
-    
-    let html = '';
-    if (batches.length === 0) {
-        html = '<option value="">No batches created yet</option>';
-        if(batchSelect) batchSelect.disabled = true;
-    } else {
-        batches.forEach(batch => {
-            html += `<option value="${batch.id}">${batch.name}</option>`;
-        });
-        if(batchSelect) batchSelect.disabled = false;
-    }
-    if(batchSelect) batchSelect.innerHTML = html;
 
-    document.getElementById('materialDrawer').classList.add('active');
-    document.getElementById('drawerOverlay').classList.add('active');
-} */
 async function openMaterialDrawer() {
     const batchSelect = document.getElementById('uploadMaterialBatch');
 
     try {
-        const res = await fetch("http://localhost:5000/api/batches", {
+        const res = await fetch(`${BASE_URL}/api/batches`, {
             headers: {
                 "Authorization": `Bearer ${localStorage.getItem("token")}`
             }
@@ -680,36 +532,6 @@ function closeMaterialDrawer() {
     if(file) file.value = '';
 }
 
-/* function uploadMaterial() {
-    const batchId = document.getElementById('uploadMaterialBatch').value;
-    const title = document.getElementById('uploadMaterialTitle').value;
-    const fileInput = document.getElementById('uploadMaterialFile').files[0];
-
-    if (!batchId || !title) {
-        alert("Please select a batch and enter a title.");
-        return;
-    }
-
-    const fileName = fileInput ? fileInput.name : "Study_Material.pdf";
-    const dateStr = new Date().toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' });
-
-    const newMaterial = {
-        id: Date.now(),
-        batchId: parseInt(batchId),
-        title: title,
-        fileName: fileName,
-        date: dateStr
-    };
-
-    const db = JSON.parse(localStorage.getItem('materialDB'));
-    db.push(newMaterial);
-    localStorage.setItem('materialDB', JSON.stringify(db));
-
-    alert("Success! Material uploaded to the batch.");
-    closeMaterialDrawer();
-} */
-
-
 async function uploadMaterial() {
     const batchId = document.getElementById('uploadMaterialBatch').value;
     const title = document.getElementById('uploadMaterialTitle').value;
@@ -725,7 +547,7 @@ async function uploadMaterial() {
     formData.append("title", title);
     formData.append("file", fileInput);
 
-    const res = await fetch("http://localhost:5000/api/materials", {
+    const res = await fetch(`${BASE_URL}/api/materials`, {
         method: "POST",
         headers: {
             "Authorization": `Bearer ${localStorage.getItem("token")}`
@@ -813,115 +635,12 @@ function submitAssignment() {
     checkTeacherNotifications();
 }
 
-/* function renderStudentResults() {
-    const tbody = document.getElementById('studentResultsBody');
-    if (!tbody) return;
-
-    if (role !== 'student') return;
-
-    const db = JSON.parse(localStorage.getItem('assignmentDB')) || [];
-    const myAssignments = db.filter(task => task.studentName === username);
-
-    let html = '';
-
-    myAssignments.forEach(task => {
-        let statusBadge = '';
-        let displayScore = '--';
-        let letterGrade = '--';
-
-        if (task.status === 'Pending') {
-            statusBadge = `<span class="status-badge" style="background:#ffedd5; color:#ea580c;">Pending Grading</span>`;
-        } else if (task.status === 'Graded') {
-            statusBadge = `<span class="status-badge" style="background:#dcfce7; color:#166534;">Graded</span>`;
-            displayScore = `${task.score} / 100`;
-            
-            if (task.score >= 90) letterGrade = 'A+';
-            else if (task.score >= 80) letterGrade = 'A';
-            else if (task.score >= 70) letterGrade = 'B';
-            else if (task.score >= 60) letterGrade = 'C';
-            else letterGrade = 'F';
-        }
-
-        html += `
-        <tr style="background: white; border-bottom: 1px solid #f1f5f9;">
-            <td style="padding: 15px;">
-                <span style="display:block; color:var(--primary); font-weight:bold;">${task.subject}</span>
-                <span style="font-size:0.75rem; color:#64748b;">${task.grade} - ${task.batch}</span>
-            </td>
-            <td style="padding: 15px;"><a href="#" onclick="viewDocument('${task.fileName}')" style="color:#2563eb; text-decoration:none;"><i class="fas fa-file-word"></i> ${task.fileName}</a></td>
-            <td style="padding: 15px;">${statusBadge}</td>
-            <td style="padding: 15px; font-weight:bold; color:#1e1b4b;">${displayScore}</td>
-            <td style="padding: 15px; font-weight:bold; color:var(--primary); font-size: 1.1rem;">${letterGrade}</td>
-        </tr>`;
-    });
-
-    if (html === '') {
-        html = '<tr><td colspan="5" style="text-align:center; padding:30px; color:#64748b;">No assignments submitted yet.</td></tr>';
-    }
-    tbody.innerHTML = html;
-} */
-
-/* async function renderStudentResults() {
-    const tbody = document.getElementById('studentResultsBody');
-    if (!tbody) return;
-
-    try {
-        const res = await fetch("http://localhost:5000/api/assignments/student", {
-            headers: {
-                "Authorization": `Bearer ${localStorage.getItem("token")}`
-            }
-        });
-
-        const data = await res.json();
-
-        let html = '';
-
-        data.forEach(task => {
-
-    let statusBadge = '';
-    let displayScore = '--';
-    let letterGrade = '--';
-
-    if (task.status === 'Pending') {
-        statusBadge = `<span style="background:#ffedd5;color:#ea580c;padding:4px 8px;border-radius:6px;">Pending</span>`;
-    } 
-    else if (task.status === 'Graded') {
-        statusBadge = `<span style="background:#dcfce7;color:#166534;padding:4px 8px;border-radius:6px;">Graded</span>`;
-        displayScore = `${task.score} / 100`;
-
-        if (task.score >= 90) letterGrade = 'A+';
-        else if (task.score >= 80) letterGrade = 'A';
-        else if (task.score >= 70) letterGrade = 'B';
-        else if (task.score >= 60) letterGrade = 'C';
-        else letterGrade = 'F';
-    }
-
-    html += `
-        <tr>
-            <td>${task.batchName}</td>
-            <td>${task.fileName}</td>
-            <td>${statusBadge}</td>
-            <td>${displayScore}</td>
-            <td>${letterGrade}</td>
-        </tr>
-    `;
-});
-
-        tbody.innerHTML = html || `<tr><td colspan="5">No results yet</td></tr>`;
-
-    } catch (err) {
-        console.error("ASSIGNMENT LOAD ERROR:", err);
-        tbody.innerHTML = `<tr><td colspan="5">Error loading results</td></tr>`;
-    }
-} */
-
-
 async function renderStudentResults() {
     const tbody = document.getElementById('studentResultsBody');
     if (!tbody) return;
 
     try {
-        const res = await fetch("http://localhost:5000/api/results/student", {
+        const res = await fetch(`${BASE_URL}/api/results/student`, {
             headers: {
                 "Authorization": `Bearer ${localStorage.getItem("token")}`
             }
@@ -966,7 +685,7 @@ async function renderStudentEnrollmentTable() {
     const tbody = document.getElementById('studentEnrollmentTableBody');
 
     try {
-        const res = await fetch("http://localhost:5000/api/batches", {
+        const res = await fetch(`${BASE_URL}/api/batches`, {
         headers: {
             "Authorization": `Bearer ${localStorage.getItem("token")}`
         }
@@ -983,7 +702,7 @@ async function renderStudentEnrollmentTable() {
 
         const batches = data;
 
-        const enrollRes = await fetch("http://localhost:5000/api/enrollments", {
+        const enrollRes = await fetch(`${BASE_URL}/api/enrollments`, {
             headers: {
                 "Authorization": `Bearer ${localStorage.getItem("token")}`
             }
@@ -1029,66 +748,10 @@ async function renderStudentEnrollmentTable() {
 }
 
 
-/* function renderStudentEnrollmentTable() {
-    const tbody = document.getElementById('studentEnrollmentTableBody');
-    if (!tbody) return;
-
-    const batches = JSON.parse(localStorage.getItem('batchDB')) || [];
-    const enrollments = JSON.parse(localStorage.getItem('enrollmentDB')) || [];
-    let html = '';
-
-    batches.forEach(batch => {
-        const userRequest = enrollments.find(req => req.batchId === batch.id && req.studentName === username);
-        let actionButton = `<button onclick="applyForBatch(${batch.id})" style="padding: 8px 15px; background: var(--primary); color: white; border: none; border-radius: 5px; cursor: pointer; font-weight: 600;">Apply Now</button>`;
-        
-        if (userRequest) {
-            if (userRequest.status === 'Pending') {
-                actionButton = `<span style="color: #ea580c; font-weight: bold; background: #ffedd5; padding: 5px 10px; border-radius: 5px;">Pending Approval</span>`;
-            } else if (userRequest.status === 'Approved') {
-                actionButton = `<span style="color: #166534; font-weight: bold; background: #dcfce7; padding: 5px 10px; border-radius: 5px;"><i class="fas fa-check-circle"></i> Enrolled</span>`;
-            }
-        } else if (batch.enrolled >= batch.capacity) {
-            actionButton = `<span style="color: #991b1b; font-weight: bold; background: #fee2e2; padding: 5px 10px; border-radius: 5px;">Batch Full</span>`;
-        }
-
-        html += `
-        <tr style="border-bottom: 1px solid #f1f5f9;">
-            <td style="padding: 15px;">
-                <span style="font-weight: 700; color: var(--primary); display:block;">${batch.name}</span>
-                <span style="font-size: 0.75rem; color: #64748b;">Code: ${batch.code}</span>
-            </td>
-            <td style="padding: 15px;">${batch.start}</td>
-            <td style="padding: 15px;">${batch.enrolled} / ${batch.capacity}</td>
-            <td style="padding: 15px; text-align: right;">${actionButton}</td>
-        </tr>`;
-    });
-
-    if (html === '') html = '<tr><td colspan="4" style="text-align:center; padding:20px;">No batches available right now.</td></tr>';
-    tbody.innerHTML = html;
-} */
-
-/* function applyForBatch(batchId) {
-    const enrollments = JSON.parse(localStorage.getItem('enrollmentDB')) || [];
-    
-    enrollments.push({
-        id: Date.now(),
-        studentName: username,
-        batchId: batchId,
-        status: 'Pending'
-    });
-    
-    localStorage.setItem('enrollmentDB', JSON.stringify(enrollments));
-    alert("Application sent! Waiting for teacher approval.");
-    
-    renderStudentEnrollmentTable();
-    checkTeacherNotifications(); 
-} */
-
-
 async function applyForBatch(batchId) {
     const token = localStorage.getItem("token");
 
-    const res = await fetch("http://localhost:5000/api/enrollments", {
+    const res = await fetch(`${BASE_URL}/api/enrollments`, {
     //const res = await fetch("http://localhost:5000/api/enroll", {
         method: "POST",
         headers: {
@@ -1107,45 +770,11 @@ async function applyForBatch(batchId) {
 }
 
 // --- Student Study Material View Logic ---
-/* function renderStudentMaterialsList() {
-    const container = document.getElementById('studentMaterialsGrid');
-    if (!container) return;
-
-    const enrollments = JSON.parse(localStorage.getItem('enrollmentDB')) || [];
-    const batches = JSON.parse(localStorage.getItem('batchDB')) || [];
-    
-    const myApprovedBatches = enrollments.filter(req => req.studentName === username && req.status === 'Approved');
-    
-    let html = '';
-
-    if (myApprovedBatches.length === 0) {
-        container.innerHTML = '<p style="color:#64748b; width:100%; grid-column: 1 / -1; padding: 20px;">You do not have access to any study materials yet. Please enroll in a batch first.</p>';
-        return;
-    }
-
-    myApprovedBatches.forEach(req => {
-        const batch = batches.find(b => b.id === req.batchId);
-        if (batch) {
-            html += `
-            <div style="background: white; border: 1px solid #e2e8f0; border-radius: 12px; padding: 20px; cursor: pointer; transition: 0.2s; box-shadow: 0 2px 4px rgba(0,0,0,0.02);" 
-                 onmouseover="this.style.borderColor='var(--primary)'; this.style.transform='translateY(-2px)';" 
-                 onmouseout="this.style.borderColor='#e2e8f0'; this.style.transform='translateY(0)';"
-                 onclick="viewSpecificBatchMaterials(${batch.id}, '${batch.name}')">
-                
-                <i class="fas fa-folder" style="font-size: 2.5rem; color: #f59e0b; margin-bottom: 15px; display: block;"></i>
-                <h3 style="color: var(--primary); font-size: 1.1rem; margin-bottom: 5px;">${batch.name}</h3>
-                <p style="color: #64748b; font-size: 0.8rem;">Click to view materials</p>
-            </div>`;
-        }
-    });
-
-    container.innerHTML = html;
-} */
 
 async function renderStudentMaterialsList() {
     const container = document.getElementById('studentMaterialsGrid');
 
-    const res = await fetch("http://localhost:5000/api/materials", {
+    const res = await fetch(`${BASE_URL}/api/materials`, {
         headers: {
             "Authorization": `Bearer ${localStorage.getItem("token")}`
         }
@@ -1188,7 +817,7 @@ async function renderStudentMaterialsList() {
 
 async function downloadMaterial(id) {
     try {
-        const res = await fetch(`http://localhost:5000/api/materials/download/${id}`, {
+        const res = await fetch(`${BASE_URL}/api/materials/download/${id}`, {
             headers: {
                 "Authorization": `Bearer ${localStorage.getItem("token")}`
             }
@@ -1270,7 +899,7 @@ function addQuestion() {
 
 async function loadTestBatches() {
     try {
-        const res = await fetch("http://localhost:5000/api/batches", {
+        const res = await fetch(`${BASE_URL}/api/batches`, {
             headers: {
                 "Authorization": `Bearer ${localStorage.getItem("token")}`
             }
@@ -1314,7 +943,7 @@ async function createTest() {
         });
     });
 
-    const res = await fetch("http://localhost:5000/api/tests", {
+    const res = await fetch(`${BASE_URL}/api/tests`, {
         method: "POST",
         headers: {
             "Content-Type": "application/json",
@@ -1333,26 +962,8 @@ async function createTest() {
     alert(data.message);
 }
 
-/* async function loadTests() {
-    const res = await fetch("http://localhost:5000/api/tests", {
-        headers: {
-            "Authorization": `Bearer ${localStorage.getItem("token")}`
-        }
-    });
-
-    const tests = await res.json();
-
-    let html = '';
-
-    tests.forEach(t => {
-        html += `<button onclick="startTest(${t.id})">${t.title}</button>`;
-    });
-
-    document.getElementById('testList').innerHTML = html;
-} */
-
 async function loadTests() {
-    const res = await fetch("http://localhost:5000/api/tests", {
+    const res = await fetch(`${BASE_URL}/api/tests`, {
         headers: {
             "Authorization": `Bearer ${localStorage.getItem("token")}`
         }
@@ -1377,7 +988,7 @@ let answers = {};
 async function startTest(id) {
     currentTest = id;
 
-    const res = await fetch(`http://localhost:5000/api/tests/${id}`, {
+    const res = await fetch(`${BASE_URL}/api/tests/${id}`, {
         headers: {
             "Authorization": `Bearer ${localStorage.getItem("token")}`
         }
@@ -1409,7 +1020,7 @@ async function submitTest() {
         answers[qId] = r.value;
     });
 
-    const res = await fetch("http://localhost:5000/api/tests/submit", {
+    const res = await fetch(`${BASE_URL}/api/tests/submit`, {
         method: "POST",
         headers: {
             "Content-Type": "application/json",
@@ -1439,42 +1050,63 @@ function initStudent() {
     loadLiveClass();
 }
 
-function loadTeacherBatches() {
-    fetch("http://localhost:5000/api/batches/my", {
-        headers: {
-            "Authorization": "Bearer " + localStorage.getItem("token")
-        }
-    })
-    .then(res => res.json())
-    .then(data => {
-        console.log("Batches:", data);
+async function loadLiveClassBatches() {
+    console.log("🚀 FUNCTION CALLED");
+console.log("ELEMENT:", document.getElementById("batchSelect1"));
+    const select = document.getElementById("batchSelect1");
 
-        const select = document.getElementById("batchSelect");
+    console.log("SELECT FOUND:", select);
 
-        select.innerHTML = `<option value="">Select Batch</option>`;
+    if (!select) {
+        console.error("❌ batchSelect1 not found in DOM");
+        return;
+    }
 
-        data.forEach(batch => {
-            const option = document.createElement("option");
-            option.value = batch.id;
-            option.textContent = batch.name + " (" + batch.subject + ")";
-            select.appendChild(option);
+    try {
+        const res = await fetch(`${BASE_URL}/api/batches`, {
+            headers: {
+                "Authorization": `Bearer ${localStorage.getItem("token")}`
+            }
         });
-    })
-    .catch(err => console.log("Batch load error:", err));
+
+        console.log("STATUS:", res.status);
+
+        if (!res.ok) {
+            const err = await res.text();
+            console.error("SERVER ERROR:", err);
+            throw new Error(err);
+        }
+
+        const batches = await res.json();
+
+        console.log("✅ DATA:", batches);
+
+        if (!Array.isArray(batches) || batches.length === 0) {
+            select.innerHTML = `<option>No batches found</option>`;
+            return;
+        }
+
+        select.innerHTML =
+            `<option value="">Select Batch</option>` +
+            batches.map(b =>
+                `<option value="${b.id}">${b.name}</option>`
+            ).join("");
+
+    } catch (err) {
+        console.error("❌ ERROR:", err);
+    }
 }
-
+    
 function createLive() {
-    const batchId = document.getElementById("batchSelect").value;
+    const batchId = document.getElementById("batchSelect1").value;
     const meetingLink = document.getElementById("meetingLink").value;
-
-    console.log("Sending:", { batchId, meetingLink });
 
     if (!batchId || !meetingLink) {
         alert("Select batch and enter Zoom link");
         return;
     }
 
-    fetch("http://localhost:5000/api/live-class", {
+    fetch(`${BASE_URL}/api/live-class`, {
         method: "POST",
         headers: {
             "Content-Type": "application/json",
@@ -1484,14 +1116,22 @@ function createLive() {
     })
     .then(res => res.json())
     .then(data => {
-        console.log(data);
         alert(data.message);
+
+        // ✅ clear input after success
+        document.getElementById("meetingLink").value = "";
+
+        // ✅ OPTIONAL: reload student view
+        loadLiveClass();
     })
-    .catch(err => console.log(err));
-}
+    .catch(err => {
+        console.log(err);
+        alert("Error creating live class");
+    });
+}    
 
 function loadLiveClass() {
-    fetch("http://localhost:5000/api/live-class/student", {
+    fetch(`${BASE_URL}/api/live-class/student`, {
         headers: {
             "Authorization": "Bearer " + localStorage.getItem("token")
         }
@@ -1532,7 +1172,7 @@ function loadLiveClass() {
 
 const params = new URLSearchParams(window.location.search);
 
-let currentUser = JSON.parse(localStorage.getItem("user"));
+//let currentUser = JSON.parse(localStorage.getItem("user"));
 
 function loadAdminCollege() {
     const el = document.getElementById("adminCollegeDisplay");
@@ -1544,27 +1184,38 @@ function loadAdminCollege() {
 }
 
 async function registerTeacher() {
+    const currentUser = getUserFromToken();
+
     if (!currentUser || !currentUser.college) {
         alert("User not loaded properly");
         return;
     }
 
-    const name = document.getElementById("t_name").value;
-    const email = document.getElementById("t_email").value;
-    const phone = document.getElementById("t_phone").value;
+    const nameEl = document.getElementById("t_name");
+    const emailEl = document.getElementById("t_email");
+    const phoneEl = document.getElementById("t_phone");
 
-    const college = currentUser.college;
+    const name = nameEl.value;
+    const email = emailEl.value;
+    const phone = phoneEl.value;
 
-    const res = await fetch("http://localhost:5000/api/register-teacher", {
+    const res = await fetch(`${BASE_URL}/api/register-teacher`, {
         method: "POST",
         headers: {
             "Content-Type": "application/json"
         },
-        body: JSON.stringify({ name, email, phone, college })
+        body: JSON.stringify({ name, email, phone, college: currentUser.college })
     });
 
     const data = await res.json();
     alert(data.message);
+
+    // ✅ CLEAR FIELDS AFTER SUCCESS
+    if (res.ok) {
+        nameEl.value = "";
+        emailEl.value = "";
+        phoneEl.value = "";
+    }
 }
 
 async function loadTeacherBatches() {
@@ -1574,7 +1225,7 @@ async function loadTeacherBatches() {
     // ✅ FIX: check element exists
     if (!select) return;
 
-    const res = await fetch("http://localhost:5000/api/batches/my", {
+    const res = await fetch(`${BASE_URL}/api/batches/my`, {
         headers: {
             "Authorization": "Bearer " + localStorage.getItem("token")
         }
@@ -1587,38 +1238,13 @@ async function loadTeacherBatches() {
         data.map(b => `<option value="${b.id}">${b.name}</option>`).join("");
 }
 
-/* async function registerStudent() {
-    const name = document.getElementById("s_name").value;
-    const email = document.getElementById("s_email").value;
-    const phone = document.getElementById("s_phone").value;
-
-   // const college = "St Paul College"; // temporary
-    const college = currentUser.college; // ✅ AUTO
-
-    const res = await fetch("http://localhost:5000/api/register-student", {
-        method: "POST",
-        headers: {
-            "Content-Type": "application/json"
-        },
-        body: JSON.stringify({
-            name,
-            email,
-            phone,
-            college
-        })
-    });
-
-    const data = await res.json();
-    alert(data.message);
-} */
-
 async function registerStudent() {
 
     const name = document.getElementById("s_name").value;
     const email = document.getElementById("s_email").value;
     const phone = document.getElementById("s_phone").value;
 
-    const res = await fetch("http://localhost:5000/api/register-student", {
+    const res = await fetch(`${BASE_URL}/api/register-student`, {
         method: "POST",
         headers: {
             "Content-Type": "application/json",
