@@ -6,7 +6,7 @@ const jwt = require('jsonwebtoken');
 const verifyToken = require("../middleware/authMiddleware");
 
 // REGISTER TEACHER
-router.post("/register-teacher", (req, res) => {
+/* router.post("/register-teacher", (req, res) => {
     const { name, email, phone, college } = req.body;
 
     const password = "123456"; // default password
@@ -21,9 +21,83 @@ router.post("/register-teacher", (req, res) => {
 
         res.json({ message: "Teacher Registered Successfully ✅" });
     });
+}); */
+
+router.post("/register-teacher", (req, res) => {
+
+    const {
+        firstname,
+        lastname,
+        username,
+        email,
+        phone,
+        college
+    } = req.body;
+
+    const password = "123456";
+
+    // CHECK DUPLICATE EMAIL OR USERNAME
+    const checkSql = `
+        SELECT * FROM teachers
+        WHERE email = ? OR username = ?
+    `;
+
+    db.query(checkSql, [email, username], (err, rows) => {
+
+        if (err) {
+            console.log(err);
+            return res.status(500).json({
+                message: "DB Error"
+            });
+        }
+
+        if (rows.length > 0) {
+            return res.json({
+                message: "Email or Username already exists"
+            });
+        }
+
+        const sql = `
+            INSERT INTO teachers
+            (
+                firstname,
+                lastname,
+                username,
+                email,
+                password,
+                college
+            )
+            VALUES (?, ?, ?, ?, ?, ?)
+        `;
+
+        db.query(
+            sql,
+            [
+                firstname,
+                lastname,
+                username,
+                email,
+                password,
+                college
+            ],
+            (err, result) => {
+
+                if (err) {
+                    console.log(err);
+                    return res.status(500).json({
+                        message: "DB Error"
+                    });
+                }
+
+                res.json({
+                    message: "Teacher Registered Successfully ✅"
+                });
+            }
+        );
+    });
 });
 
-router.post("/register-student", verifyToken, (req, res) => {
+/* router.post("/register-student", verifyToken, (req, res) => {
 
     const db = require("../db");
 
@@ -44,7 +118,81 @@ router.post("/register-student", verifyToken, (req, res) => {
 
         res.json({ message: "Student Registered Successfully ✅" });
     });
+}); */
+
+router.post("/register-student", verifyToken, (req, res) => {
+
+    const {
+        firstname,
+        lastname,
+        username,
+        email,
+        phone
+    } = req.body;
+
+    const college = req.user.college;
+
+    // CHECK DUPLICATE
+    const checkSql = `
+        SELECT * FROM students
+        WHERE email = ? OR username = ?
+    `;
+
+    db.query(checkSql, [email, username], (err, rows) => {
+
+        if (err) {
+            console.log(err);
+            return res.status(500).json({
+                message: "DB Error"
+            });
+        }
+
+        if (rows.length > 0) {
+            return res.json({
+                message: "Email or Username already exists"
+            });
+        }
+
+        const sql = `
+            INSERT INTO students
+            (
+                firstname,
+                lastname,
+                username,
+                email,
+                password,
+                college
+            )
+            VALUES (?, ?, ?, ?, ?, ?)
+        `;
+
+        db.query(
+            sql,
+            [
+                firstname,
+                lastname,
+                username,
+                email,
+                "123456",
+                college
+            ],
+            (err, result) => {
+
+                if (err) {
+                    console.log(err);
+                    return res.status(500).json({
+                        message: "DB Error"
+                    });
+                }
+
+                res.json({
+                    message: "Student Registered Successfully ✅"
+                });
+            }
+        );
+    });
 });
+
 
 // ================= ADMIN REGISTER =================
 router.post('/admin/register', async (req, res) => {
@@ -69,28 +217,43 @@ router.post('/admin/register', async (req, res) => {
 // ================= ADMIN LOGIN =================
 
 router.post('/admin/login', (req, res) => {
-    const { email, password, college } = req.body;
+
+    console.log(req.body);
+
+    const { username, password, college } = req.body;
 
     db.query(
-        "SELECT * FROM admins WHERE email=? AND college=?",
-        [email, college],
-        async (err, result) => {
-            if (err) return res.status(500).json({ message: "DB Error" });
+        "SELECT * FROM admins WHERE username=? AND college=?",
+        [username, college],
+        (err, result) => {
+
+            if (err) {
+                console.log(err);
+                return res.status(500).json({
+                    message: "DB Error"
+                });
+            }
 
             if (result.length === 0) {
-                return res.json({ message: "Admin not found" });
+                return res.json({
+                    message: "Admin not found"
+                });
             }
 
             const admin = result[0];
 
-            //const match = await bcrypt.compare(password, admin.password);
-            const match = password === admin.password;
-            if (!match) {
-                return res.json({ message: "Wrong password" });
+            if (password !== admin.password) {
+                return res.json({
+                    message: "Wrong password"
+                });
             }
 
             const token = jwt.sign(
-                { id: admin.id, role: "admin", college: admin.college },
+                {
+                    id: admin.id,
+                    role: "admin",
+                    college: admin.college
+                },
                 "SECRET_KEY",
                 { expiresIn: "1d" }
             );
@@ -103,14 +266,13 @@ router.post('/admin/login', (req, res) => {
         }
     );
 });
-
 // ================= Teacher LOGIN =================
 
 router.post('/teacher/login', (req, res) => {
     const { email, password, college } = req.body;
 
     db.query(
-        "SELECT * FROM teachers WHERE email=? AND college=?",
+        "SELECT * FROM teachers WHERE (email=? OR username=?) AND college=?",
         [email, college],
         async (err, result) => {
             if (err) return res.status(500).json({ message: "DB Error" });
@@ -164,7 +326,7 @@ router.post('/teacher/login', (req, res) => {
 
 router.post('/student/login', (req, res) => { 
     const { email, password, college } = req.body; 
-    db.query( "SELECT * FROM students WHERE email=? AND college=?", 
+    db.query( "SELECT * FROM students WHERE (email=? OR username=?) AND college=?", 
         [email, college], 
         async (err, result) => { 
             if (err) return res.status(500).json({ message: "DB Error" }); 

@@ -1200,7 +1200,7 @@ function loadAdminCollege() {
     el.innerText = "College: St Paul College";
 }
 
-async function registerTeacher() {
+/* async function registerTeacher() {
     const currentUser = getUserFromToken();
 
     if (!currentUser || !currentUser.college) {
@@ -1233,6 +1233,49 @@ async function registerTeacher() {
         emailEl.value = "";
         phoneEl.value = "";
     }
+} */
+
+async function registerTeacher() {
+
+    const currentUser = getUserFromToken();
+
+    if (!currentUser || !currentUser.college) {
+        alert("User not loaded properly");
+        return;
+    }
+
+    const firstname = document.getElementById("t_firstname").value;
+    const lastname = document.getElementById("t_lastname").value;
+    const username = document.getElementById("t_username").value;
+    const email = document.getElementById("t_email").value;
+    const phone = document.getElementById("t_phone").value;
+
+    const res = await fetch(`${BASE_URL}/api/register-teacher`, {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+            firstname,
+            lastname,
+            username,
+            email,
+            phone,
+            college: currentUser.college
+        })
+    });
+
+    const data = await res.json();
+
+    alert(data.message);
+
+    if (res.ok) {
+        document.getElementById("t_firstname").value = "";
+        document.getElementById("t_lastname").value = "";
+        document.getElementById("t_username").value = "";
+        document.getElementById("t_email").value = "";
+        document.getElementById("t_phone").value = "";
+    }
 }
 
 async function loadTeacherBatches() {
@@ -1255,7 +1298,7 @@ async function loadTeacherBatches() {
         data.map(b => `<option value="${b.id}">${b.name}</option>`).join("");
 }
 
-async function registerStudent() {
+/* async function registerStudent() {
 
     const name = document.getElementById("s_name").value;
     const email = document.getElementById("s_email").value;
@@ -1276,9 +1319,44 @@ async function registerStudent() {
 
     const data = await res.json();
     alert(data.message);
+} */
+
+async function registerStudent() {
+
+    const firstname = document.getElementById("s_firstname").value;
+    const lastname = document.getElementById("s_lastname").value;
+    const username = document.getElementById("s_username").value;
+    const email = document.getElementById("s_email").value;
+    const phone = document.getElementById("s_phone").value;
+
+    const res = await fetch(`${BASE_URL}/api/register-student`, {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json",
+            "Authorization": "Bearer " + localStorage.getItem("token")
+        },
+        body: JSON.stringify({
+            firstname,
+            lastname,
+            username,
+            email,
+            phone
+        })
+    });
+
+    const data = await res.json();
+
+    alert(data.message);
+
+    if (res.ok) {
+        document.getElementById("s_firstname").value = "";
+        document.getElementById("s_lastname").value = "";
+        document.getElementById("s_username").value = "";
+        document.getElementById("s_email").value = "";
+        document.getElementById("s_phone").value = "";
+    }
 }
-
-
+    
 function getUserFromToken() {
     const token = localStorage.getItem("token");
 

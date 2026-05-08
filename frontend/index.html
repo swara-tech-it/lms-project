@@ -966,33 +966,8 @@
     }
 
     // 2. THE CRITICAL LOGIN LOGIC
-  /*   function handleLogin(event, role) {
-        event.preventDefault();
-        const usernameInput = document.getElementById('username').value.trim();
-        const passwordInput = document.getElementById('password').value;
-        
-        // Find user in the database
-        const user = usersDB.find(u => u.username === usernameInput && u.password === passwordInput && u.role === role);
-
-        if (user) {
-            closeModal();
-            
-            // CHECK USER TYPE
-            if (user.type === 'stpaul') {
-                // >>> REDIRECT TO THE NEW PAGE <<<
-                // This sends the user to the file we just created
-                window.location.href = `stpaul.html?role=${user.role}`;
-            } else {
-                // Generic user? Just show the dashboard on this same page
-                showDashboard(user.role);
-            }
-        } else {
-            alert('Invalid credentials!');
-        }
-    }
- */
-   
- function handleLogin(event, role) {
+ 
+/*  function handleLogin(event, role) {
     event.preventDefault();
 
     const email = document.getElementById('username').value;
@@ -1053,7 +1028,65 @@
     });
 
 }
- 
+  */
+
+  function handleLogin(event, role) {
+    event.preventDefault();
+
+    const username = document.getElementById('username').value;
+    const password = document.getElementById('password').value;
+    const college = document.getElementById('college').value;
+
+    if (!college) {
+        alert("Please select college ❗");
+        return;
+    }
+
+    fetch(`https://lms.a2henosistechnologies.com/api/${role}/login`, {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+            username,
+            password,
+            college
+        })
+    })
+    .then(res => res.json())
+    .then(data => {
+
+        if (data.token) {
+
+            localStorage.setItem("token", data.token);
+            localStorage.setItem("role", role);
+
+            alert("Welcome " + role + " 🎉");
+
+            if (data.role === "admin") {
+                window.location.href =
+                    "stpaul(1).html?role=admin&user=" + data.user.name;
+            }
+            else if (data.role === "teacher") {
+                window.location.href =
+                    "stpaul(1).html?role=teacher&user=" + data.user.name;
+            }
+            else if (data.role === "student") {
+                window.location.href =
+                    "stpaul(1).html?role=student&user=" + data.user.name;
+            }
+
+        } else {
+            alert(data.message);
+        }
+
+    })
+    .catch(err => {
+        console.error(err);
+        alert("Server error ❌");
+    });
+}
+
 function showDashboard(role) {
         document.querySelectorAll('.hero, .dashboard, .page').forEach(page => page.style.display = 'none');
         document.getElementById('navLinks').style.display = 'none';
