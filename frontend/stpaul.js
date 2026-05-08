@@ -4,7 +4,7 @@
 const urlParams = new URLSearchParams(window.location.search);
 let role = urlParams.get('role') || 'student';
 let username = urlParams.get('user') || 'User';
-const BASE_URL = "http://localhost:5000"; // for development
+const BASE_URL = "http://localhost:3000"; // for development
 // const BASE_URL = "https://lms.a2henosistechnologies.com"; // for production
 
 const roleTitles = {

@@ -799,15 +799,15 @@
     </div>
 </div>
 
-<script>
+    <script>
     let currentUser = null;
 
     // existing functions...
     showPage('home');
 
     // ✅ ADD THIS HERE (BOTTOM OF SCRIPT)
-    // fetch("https://lms.a2henosistechnologies.com/api/colleges")
-    fetch("http://localhost:5000/api/colleges")
+    fetch("https://lms.a2henosistechnologies.com/api/colleges")
+    //fetch("http://localhost:5000/api/colleges")
         .then(res => res.json())
         .then(data => {
 
@@ -864,7 +864,8 @@
     function sendOTP() {
         const email = document.getElementById("fp_email").value;
 
-        fetch("http://localhost:5000/api/forgot/send-otp", {
+        fetch("https://lms.a2henosistechnologies.com/api/forgot/send-otp", {
+        //fetch("http://localhost:5000/api/forgot/send-otp", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({ email })
@@ -878,7 +879,8 @@
         const email = document.getElementById("fp_email").value;
         const otp = document.getElementById("fp_otp").value;
 
-        fetch("http://localhost:5000/api/forgot/verify-otp", {
+        fetch("https://lms.a2henosistechnologies.com/api/forgot/verify-otp", {
+        //fetch("http://localhost:5000/api/forgot/verify-otp", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({ email, otp })
@@ -898,7 +900,8 @@
         const email = document.getElementById("fp_email").value;
         const newPassword = document.getElementById("fp_newpass").value;
 
-        fetch("http://localhost:5000/api/forgot/reset-password", {
+        fetch("https://lms.a2henosistechnologies.com/api/forgot/reset-password", {
+        //fetch("http://localhost:5000/api/forgot/reset-password", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({ email, newPassword })
@@ -1001,7 +1004,10 @@
         return;
     }
 
-    fetch(`http://localhost:5000/api/${role}/login`, {
+    //fetch("https://lms.a2henosistechnologies.com/api/${role}/login", {
+    //fetch(`http://localhost:5000/api/${role}/login`, {
+    //fetch(`https://lms.a2henosistechnologies.com/api/${role}/login`, {
+    fetch("http://lms.a2henosistechnologies.com/api/${role}/login", {
         method: "POST",
         headers: {
             "Content-Type": "application/json"
@@ -1047,7 +1053,9 @@ function showDashboard(role) {
     }
 
 function loadAdminDashboard() {
-    fetch("http://localhost:5000/api/admin/dashboard", {
+
+    fetch("https://lms.a2henosistechnologies.com/api/admin/dashboard", {
+    //fetch("http://localhost:5000/api/admin/dashboard", {
         headers: {
             "Authorization": localStorage.getItem("token")
         }

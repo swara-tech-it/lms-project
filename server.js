@@ -72,5 +72,5 @@ app.get('/api/admin/dashboard', verifyToken, (req, res) => {
 
 // SINGLE LISTENER ONLY
 app.listen(5000, () => {
-    console.log('Server running on http://localhost:5000');
+    console.log('Server running on http://localhost:3000');
 });
