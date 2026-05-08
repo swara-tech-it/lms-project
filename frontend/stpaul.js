@@ -5,7 +5,7 @@ const urlParams = new URLSearchParams(window.location.search);
 let role = urlParams.get('role') || 'student';
 let username = urlParams.get('user') || 'User';
 //const BASE_URL = "http://localhost:3000"; // for development
- const BASE_URL = "https://lms.a2henosistechnologies.com"; // for production
+const BASE_URL = "https://lms.a2henosistechnologies.com"; // for production
 
 const roleTitles = {
     'student': 'Student',
@@ -80,7 +80,8 @@ function openSubpage(pageId) {
         //loadLiveBatches();   // ⭐ IMPORTANT FIX
         loadLiveClassBatches();      
     }
-    
+
+       
 // AUTO TRIGGERS
     if (pageId === "admin-teacher-registration") {
         loadAdminCollege();
@@ -1050,9 +1051,9 @@ function initStudent() {
     loadLiveClass();
 }
 
-async function loadLiveClassBatches() {
-    console.log("🚀 FUNCTION CALLED");
-console.log("ELEMENT:", document.getElementById("batchSelect1"));
+ async function loadLiveClassBatches() {
+    //console.log("🚀 FUNCTION CALLED");
+    //console.log("ELEMENT:", document.getElementById("batchSelect1"));
     const select = document.getElementById("batchSelect1");
 
     console.log("SELECT FOUND:", select);
@@ -1095,8 +1096,10 @@ console.log("ELEMENT:", document.getElementById("batchSelect1"));
     } catch (err) {
         console.error("❌ ERROR:", err);
     }
-}
+} 
     
+
+
 function createLive() {
     const batchId = document.getElementById("batchSelect1").value;
     const meetingLink = document.getElementById("meetingLink").value;
@@ -1153,19 +1156,33 @@ function loadLiveClass() {
                 Join Zoom Class
             </a>
         `; */
+        
+           /*  <button onclick="window.open('${data.meeting_link}', '_blank')">
+                Join Zoom Class
+            </button>  */
 
         container.innerHTML = `
            <div > <h4>Live Class Active</h4>
             <p>Batch ID: ${data.batch_id}</p></div>
 
-            <button onclick="window.open('${data.meeting_link}', '_blank')">
-                Join Zoom Class
-            </button>
+            <button onclick="joinMeeting('${data.meeting_link}')">
+            Join Zoom Class
+        </button>
         `;
     })
     .catch(err => {
         console.log(err);
     });
+}
+
+function joinMeeting(link) {
+
+    if (!link.startsWith("http")) {
+        alert("Invalid meeting link");
+        return;
+    }
+
+    window.open(link, "_blank", "noopener,noreferrer");
 }
 
 // --- Registration ---
@@ -1306,4 +1323,4 @@ renderStudentEnrollmentTable();
 renderEnrollmentRequests();
 renderStudentMaterialsList();
 loadLiveClass();
-
+loadLiveClassBatches();
