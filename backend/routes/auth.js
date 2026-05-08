@@ -218,8 +218,6 @@ router.post('/admin/register', async (req, res) => {
 
 router.post('/admin/login', (req, res) => {
 
-    console.log(req.body);
-
     const { username, password, college } = req.body;
 
     db.query(
@@ -233,6 +231,8 @@ router.post('/admin/login', (req, res) => {
                     message: "DB Error"
                 });
             }
+
+            console.log(result);
 
             if (result.length === 0) {
                 return res.json({
@@ -263,12 +263,15 @@ router.post('/admin/login', (req, res) => {
                 role: "admin",
                 user: admin
             });
+
         }
     );
+
 });
+
 // ================= Teacher LOGIN =================
 
-router.post('/teacher/login', (req, res) => {
+/* router.post('/teacher/login', (req, res) => {
     const { email, password, college } = req.body;
 
     db.query(
@@ -302,7 +305,58 @@ router.post('/teacher/login', (req, res) => {
             });
         }
     );
+}); */
+
+
+router.post('/teacher/login', (req, res) => {
+
+    const { username, password, college } = req.body;
+
+    db.query(
+        "SELECT * FROM teachers WHERE (email=? OR username=?) AND college=?",
+        [username, username, college],
+        async (err, result) => {
+
+            if (err)
+                return res.status(500).json({
+                    message: "DB Error"
+                });
+
+            if (result.length === 0) {
+                return res.json({
+                    message: "Teacher not found"
+                });
+            }
+
+            const teacher = result[0];
+
+            if (password !== teacher.password) {
+                return res.json({
+                    message: "Wrong password"
+                });
+            }
+
+            const token = jwt.sign(
+                {
+                    id: teacher.id,
+                    role: "teacher",
+                    college: teacher.college
+                },
+                "SECRET_KEY",
+                { expiresIn: "1d" }
+            );
+
+            res.json({
+                token,
+                role: "teacher",
+                user: teacher
+            });
+
+        }
+    );
+
 });
+
 
 // ================= Student LOGIN =================
 
@@ -324,7 +378,7 @@ router.post('/teacher/login', (req, res) => {
     );
 }); */
 
-router.post('/student/login', (req, res) => { 
+/* router.post('/student/login', (req, res) => { 
     const { email, password, college } = req.body; 
     db.query( "SELECT * FROM students WHERE (email=? OR username=?) AND college=?", 
         [email, college], 
@@ -347,8 +401,61 @@ router.post('/student/login', (req, res) => {
                 res.json({ token, 
                     role: "student", 
                     user: student }); } ); 
+            }); */
+
+// ================= STUDENT LOGIN =================
+
+router.post('/student/login', (req, res) => {
+
+    const { username, password, college } = req.body;
+
+    db.query(
+        "SELECT * FROM students WHERE (email=? OR username=?) AND college=?",
+        [username, username, college],
+        async (err, result) => {
+
+            if (err) {
+                console.log(err);
+                return res.status(500).json({
+                    message: "DB Error"
+                });
+            }
+
+            if (result.length === 0) {
+                return res.json({
+                    message: "Student not found"
+                });
+            }
+
+            const student = result[0];
+
+            // Password check
+            if (password !== student.password) {
+                return res.json({
+                    message: "Wrong password"
+                });
+            }
+
+            // JWT Token
+            const token = jwt.sign(
+                {
+                    id: student.id,
+                    role: "student",
+                    college: student.college
+                },
+                "SECRET_KEY",
+                { expiresIn: "1d" }
+            );
+
+            res.json({
+                token,
+                role: "student",
+                user: student
             });
 
+        }
+    );
 
+});
 
 module.exports = router;
