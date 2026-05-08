@@ -1,4 +1,90 @@
-const express = require('express');
+
+const path = require("path");
+const express = require("express");
+const cors = require("cors");
+
+const app = express();
+
+// DB connection
+const db = require("./backend/db");
+
+// Routes
+const authRoutes = require("./backend/routes/auth");
+const verifyToken = require("./backend/middleware/authMiddleware");
+const forgotRoutes = require("./backend/routes/forgotPassword");
+const enrollmentRoutes = require("./backend/routes/enrollment");
+const batchRoutes = require("./backend/routes/batch");
+const resultsRoutes = require("./backend/routes/results");
+const liveClassRoutes = require("./backend/routes/liveClass");
+
+// ================= MIDDLEWARE =================
+app.use(cors({
+    origin: "*",
+    methods: ["GET", "POST", "PUT", "DELETE"],
+    allowedHeaders: ["Content-Type", "Authorization"]
+}));
+
+app.use(express.json());
+
+// ================= STATIC FILES =================
+app.use(express.static(path.join(__dirname, "frontend")));
+app.use("/uploads", express.static(path.join(__dirname, "uploads")));
+
+// ================= ROUTES =================
+app.use("/api", authRoutes);
+app.use("/api/forgot", forgotRoutes);
+app.use("/api/enrollments", enrollmentRoutes);
+app.use("/api/batches", batchRoutes);
+app.use("/api/materials", require("./backend/routes/materials"));
+app.use("/api/tests", require("./backend/routes/test"));
+app.use("/api/assignments", require("./backend/routes/assignments"));
+app.use("/api/live-class", liveClassRoutes);
+app.use("/api/results", resultsRoutes);
+
+// ================= HOME =================
+app.get("/", (req, res) => {
+    res.send("LMS Server Running 🚀");
+});
+
+// ================= COLLEGES API =================
+app.get("/api/colleges", (req, res) => {
+    const sql = `
+        SELECT DISTINCT college FROM teachers WHERE college IS NOT NULL
+        UNION
+        SELECT DISTINCT college FROM students WHERE college IS NOT NULL
+        UNION
+        SELECT DISTINCT college FROM admins WHERE college IS NOT NULL
+    `;
+
+    db.query(sql, (err, results) => {
+        if (err) {
+            console.log("DB Error:", err);
+            return res.status(500).json({ message: "DB error" });
+        }
+
+        res.json(results);
+    });
+});
+
+// ================= ADMIN DASHBOARD =================
+app.get("/api/admin/dashboard", verifyToken, (req, res) => {
+    res.json({
+        message: "Welcome Admin 🎉",
+        user: req.user
+    });
+});
+
+// ================= SERVER START =================
+//app.listen(5000, () => {
+  //  console.log("Server running on http://localhost:5000");
+//});
+
+app.listen(5000, "0.0.0.0", () => {
+    console.log("Server running on port 5000");
+});
+
+
+/* const express = require('express');
 const cors = require('cors');
 
 const app = express();
@@ -73,4 +159,4 @@ app.get('/api/admin/dashboard', verifyToken, (req, res) => {
 // SINGLE LISTENER ONLY
 app.listen(5000, () => {
     console.log('Server running on http://localhost:3000');
-});
+}); */
